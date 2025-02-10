@@ -60,3 +60,25 @@ def max_value(state):
         if value > best_value:
             best_value = value
     return best_value
+
+def value(state, player, better, bad):
+    """
+    Returns the value of state if it is player's turn
+    :param better takes two values and returns True if the first is better.
+    :param bad a value worse than anything we will see.
+    lambda just creates an unnamed function that returns the shit after :
+    """
+    if winner(state) != 0:
+        return winner(state)
+    if not legal_moves(state):
+        return winner(state)
+    best_value = bad
+    for m in legal_moves(state):
+        s = successor(state, m, player)
+        if player == 'X':
+            v = value(s, 'O', lambda a, b: a < b, 2)
+        else:
+            v = value(s, 'X', lambda a, b: a > b, -2)
+        if better(value, best_value):
+            best_value = v
+    return best_value
