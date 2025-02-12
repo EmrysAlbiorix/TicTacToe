@@ -61,6 +61,14 @@ def max_value(state):
             best_value = value
     return best_value
 
+# This function is the same as lambda a, b: a > b
+def greater(a, b):
+    return a > b
+
+# This function is the same as lambda a, b: a < b
+def lesser(a, b):
+    return a < b
+
 def value(state, player, better, bad):
     """
     Returns the value of state if it is player's turn
@@ -68,10 +76,10 @@ def value(state, player, better, bad):
     :param bad a value worse than anything we will see.
     lambda just creates an unnamed function that returns the shit after :
     """
-    if winner(state) != 0:
+    if winner(state) != 0: # Someone has already won
         return winner(state)
-    if not legal_moves(state):
-        return winner(state)
+    if not legal_moves(state): # Game ended in a tie
+        return 0
     best_value = bad
     for m in legal_moves(state):
         s = successor(state, m, player)
@@ -79,6 +87,17 @@ def value(state, player, better, bad):
             v = value(s, 'O', lambda a, b: a < b, 2)
         else:
             v = value(s, 'X', lambda a, b: a > b, -2)
-        if better(value, best_value):
+        if better(v, best_value):
             best_value = v
     return best_value
+
+def best_move_for_x(state):
+    best_value = -2
+    best_move = None
+    for m in legal_moves(state):
+        s = successor(state, m, 'X')
+        v = value(s, 'O', lesser, 2)
+        if v > best_value:
+            best_value = v
+            best_move = m
+    return best_move
